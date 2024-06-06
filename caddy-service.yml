@@ -4,9 +4,9 @@ metadata:
   name: caddy-service
 spec:
   selector:
-    app: caddy  
+    app: caddy
   ports:
     - protocol: TCP
-      port: 80   
-      targetPort: 8080  
-  type: NodePort  
+      port: 80
+      targetPort: 8080
+  type: NodePort
