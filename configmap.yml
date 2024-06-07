@@ -9,3 +9,4 @@ data:
         root * /usr/share/caddy
         file_server
     }
+  LIVENESS_PATH: "static-html.html"

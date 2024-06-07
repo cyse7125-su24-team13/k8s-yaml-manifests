@@ -12,26 +12,26 @@ spec:
       image: docker.io/rahhul1309/static-site:latest
       ports:
         - containerPort: 8080
+      env:
+        - name: LIVENESS_PATH
+          valueFrom:
+            configMapKeyRef:
+              name: caddy-config
+              key: LIVENESS_PATH
       envFrom:
         - configMapRef:
             name: caddy-config
       readinessProbe:
         httpGet:
-          path: /
+          path: "/"
           port: 8080
         initialDelaySeconds: 5
         periodSeconds: 10
       livenessProbe:
         httpGet:
-          path: /
+          path: "/$(LIVENESS_PATH)"
           port: 8080
         initialDelaySeconds: 15
         periodSeconds: 20
-      startupProbe:
-        httpGet:
-          path: /
-          port: 8080
-        failureThreshold: 30
-        periodSeconds: 10
   imagePullSecrets:
     - name: caddy-secret
