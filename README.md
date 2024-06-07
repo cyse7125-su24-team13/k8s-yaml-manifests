@@ -28,6 +28,7 @@ Before you begin, ensure you have the following tools installed:
    
 2. **Commands to Run Kubernetes:**
    Ask the owner for dockerconfigjson and secret.yml to build
+   ```bash
    kubectl apply -f secret.yml
    kubectl apply -f server.yml
    kubectl apply -f caddy-service.yml
