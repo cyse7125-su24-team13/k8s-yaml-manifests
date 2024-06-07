@@ -35,4 +35,4 @@ Before you begin, ensure you have the following tools installed:
    kubectl get pods
    kubectl get services
    kubectl port-forward caddy-pod 8080:8080
-        
+   kubectl describe pod caddy-pod 
