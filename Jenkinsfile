@@ -8,13 +8,6 @@ pipeline {
         VENV_DIR = 'venv'
     }
 
-    stage('Commit Message Lint') {
-            steps {
-                script {
-                    checkCommitMessage()
-                }
-            }
-        }
 
     stages {
         stage('Setup Python Virtual Environment') {
@@ -34,6 +27,14 @@ pipeline {
                     def scmVars = checkout scm
                     def commitId = scmVars.GIT_COMMIT
                     env.GIT_COMMIT_ID = commitId
+                }
+            }
+        }
+
+        stage('Commit Message Lint') {
+            steps {
+                script {
+                    checkCommitMessage()
                 }
             }
         }
