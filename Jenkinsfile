@@ -8,6 +8,7 @@ pipeline {
         VENV_DIR = 'venv'
     }
 
+
     stages {
         stage('Setup Python Virtual Environment') {
             steps {
@@ -26,6 +27,14 @@ pipeline {
                     def scmVars = checkout scm
                     def commitId = scmVars.GIT_COMMIT
                     env.GIT_COMMIT_ID = commitId
+                }
+            }
+        }
+
+        stage('Commit Message Lint') {
+            steps {
+                script {
+                    checkCommitMessage()
                 }
             }
         }
@@ -85,3 +94,15 @@ def notifyGithub(commitId, status, description) {
 
     echo "GitHub API response: ${response}"
 }
+
+def checkCommitMessage() {
+    def commitMessage = sh(script: 'git log -1 --pretty=%B', returnStdout: true).trim()
+    def conventionalCommitRegex = /^(feat|fix|docs|style|refactor|perf|test|chore|build|ci|revert|wip)(\(.+\))?: .{1,50}/
+
+    if (!commitMessage.matches(conventionalCommitRegex)) {
+        error("Commit message does not follow the Conventional Commits specification. Commit message: ${commitMessage}")
+    } else {
+        echo "Commit message is valid."
+    }
+}
+
