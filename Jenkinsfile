@@ -5,9 +5,21 @@ pipeline {
         GITHUB_TOKEN = credentials('github-token')
         GITHUB_REPO = 'cyse7125-su24-team13/k8s-yaml-manifests'
         GITHUB_API_URL = 'https://api.github.com'
+        VENV_DIR = 'venv'
     }
 
     stages {
+        stage('Setup Python Virtual Environment') {
+            steps {
+                sh '''
+                    python3 -m venv ${VENV_DIR}
+                    . ${VENV_DIR}/bin/activate
+                    pip install --upgrade pip
+                    pip install yamllint
+                '''
+            }
+        }
+
         stage('Checkout') {
             steps {
                 script {
@@ -17,10 +29,12 @@ pipeline {
                 }
             }
         }
+
         stage('Run yamllint') {
             steps {
                 // Run yamllint on the repository
                 sh '''
+                    . ${VENV_DIR}/bin/activate
                     yamllint .
                 '''
             }
@@ -49,14 +63,14 @@ pipeline {
 }
 
 def notifyGithub(commitId, status, description) {
-    def context = 'Terraform'
+    def context = 'yamllint'
     def url = "${env.GITHUB_API_URL}/repos/${env.GITHUB_REPO}/statuses/${commitId}"
 
     def payload = [
-        state: status,
-        target_url: env.BUILD_URL,
-        description: description,
-        context: context
+        state       : status,
+        target_url  : env.BUILD_URL,
+        description : description,
+        context     : context
     ]
 
     def response = sh(
